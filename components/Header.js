@@ -11,11 +11,11 @@ export default function Header() {
           <Link href="/" className="font-bold text-xl">
             Logo
           </Link>
-          <div className="hidden md:hidden gap-6">
+          <div className="hidden md:flex gap-6">
             <Link href="/about" className="dark:text-gray-200">
               ABOUT US
             </Link>
-            <Link href="/contact" className="dark:text-gray-200 md:hidden">
+            <Link href="/contact" className="hidden dark:text-gray-200 md:flex">
               CONTACT US
             </Link>
           </div>
