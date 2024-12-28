@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -5,6 +6,7 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
