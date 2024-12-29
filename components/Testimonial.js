@@ -8,7 +8,7 @@ export const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-16">
+    <section className="py-16 dark:bg-gray-900 dark:text-white">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-2xl font-bold text-center mb-12">
           Here is what customers think about us
@@ -17,7 +17,7 @@ export const TestimonialsSection = () => {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="bg-white p-6 rounded-lg shadow"
+              className="bg-white p-6 rounded-lg shadow dark:bg-gray-800 dark:text-white dark:border-white"
             >
               <p className="mb-4">{testimonial.text}</p>
               <p className="font-bold">{testimonial.name}</p>

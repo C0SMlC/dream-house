@@ -1,5 +1,5 @@
 export const AboutSection = () => (
-  <section className="bg-gray-100 py-16">
+  <section className="bg-gray-100 dark:bg-gray-900 dark:text-white py-16">
     <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
       <div>
         <img
@@ -12,7 +12,7 @@ export const AboutSection = () => (
         <h2 className="text-2xl font-bold mb-4">
           About Dream Homes Properties
         </h2>
-        <p className="text-gray-700 mb-4">
+        <p className="text-gray-700 mb-4 dark:text-white">
           At Dream Homes Properties, we are dedicated to turning your dream of
           finding the perfect home into reality. With a commitment to excellence
           and personalized service, we specialize in offering a wide range of

@@ -55,8 +55,8 @@ export default function Home() {
             subtitle="Featured projects in Dronagiri, Navi Mumbai"
           />
           <ProjectsList
-            title="Projects for sale"
-            subtitle="Featured projects in Dronagiri, Navi Mumbai"
+            title="Rent Properties"
+            subtitle="The most search projects for rent in Dronagiri, Navi Mumbai"
           />
         </div>
 
