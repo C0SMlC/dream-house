@@ -1,12 +1,15 @@
-"use client";
+import React, { useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import HeroSlideshow from "./HeroSlideshow";
+import { RentalAgreementOverlay } from "./RentalAggrementForm";
 
 export default function Header() {
+  const [showRentalAgreement, setShowRentalAgreement] = useState(false);
+
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors z-50">
-      <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between ">
+      <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="font-bold text-xl">
             Logo
@@ -23,13 +26,13 @@ export default function Header() {
 
         <div className="hidden gap-4 z-50 md:flex items-center">
           <ThemeToggle />
-          <Link
-            href="/rental-agreement"
+          <button
+            onClick={() => setShowRentalAgreement(true)}
             className="flex items-center gap-2 dark:text-gray-200"
           >
             <span className="animate-pulse w-2 h-2 rounded-full bg-red-500"></span>
             RENTAL AGREEMENT
-          </Link>
+          </button>
           <button className="px-3 py-1 border rounded dark:border-gray-600 dark:text-gray-200">
             Send SMS
           </button>
@@ -39,6 +42,11 @@ export default function Header() {
         </div>
       </nav>
       <HeroSlideshow />
+
+      <RentalAgreementOverlay
+        isVisible={showRentalAgreement}
+        onClose={() => setShowRentalAgreement(false)}
+      />
     </header>
   );
 }
