@@ -178,7 +178,7 @@ const PropertyForm = () => {
                     name="type"
                     value={formData.type}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                     required
                   >
                     <option value="">Select Type</option>
@@ -196,7 +196,7 @@ const PropertyForm = () => {
                     name="property_type"
                     value={formData.property_type}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                     required
                   >
                     <option value="">Select Property Type</option>
@@ -214,7 +214,7 @@ const PropertyForm = () => {
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                     required
                   />
                 </div>
@@ -228,7 +228,7 @@ const PropertyForm = () => {
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                     required
                   />
                 </div>
@@ -242,7 +242,7 @@ const PropertyForm = () => {
                     name="locality"
                     value={formData.locality}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                     required
                   />
                 </div>
@@ -255,7 +255,7 @@ const PropertyForm = () => {
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                     required
                   />
                 </div>
@@ -273,7 +273,7 @@ const PropertyForm = () => {
                     name="house_no"
                     value={formData.house_no}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
 
@@ -286,7 +286,7 @@ const PropertyForm = () => {
                     name="num_of_bedrooms"
                     value={formData.num_of_bedrooms}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
 
@@ -299,7 +299,7 @@ const PropertyForm = () => {
                     name="num_of_bathroom"
                     value={formData.num_of_bathroom}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
 
@@ -312,7 +312,7 @@ const PropertyForm = () => {
                     name="balconies"
                     value={formData.balconies}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
 
@@ -325,7 +325,7 @@ const PropertyForm = () => {
                     name="flat_area"
                     value={formData.flat_area}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
               </div>
@@ -342,7 +342,7 @@ const PropertyForm = () => {
                     name="other_rooms"
                     value={formData.other_rooms}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
 
@@ -354,7 +354,7 @@ const PropertyForm = () => {
                     name="furnishing"
                     value={formData.furnishing}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   >
                     <option value="">Select Furnishing</option>
                     <option value="Furnished">Furnished</option>
@@ -372,7 +372,7 @@ const PropertyForm = () => {
                     name="parking"
                     checked={formData.parking}
                     onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    className="h-4 w-4 border-gray-300 rounded text-black"
                   />
                 </div>
 
@@ -385,7 +385,7 @@ const PropertyForm = () => {
                     name="total_floors"
                     value={formData.total_floors}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   />
                 </div>
 
@@ -398,7 +398,7 @@ const PropertyForm = () => {
                     name="property_on"
                     value={formData.property_on}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md  text-black"
                   />
                 </div>
               </div>
@@ -414,7 +414,7 @@ const PropertyForm = () => {
                     name="availability"
                     value={formData.availability}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md text-black"
                   >
                     <option value="">Select Availability</option>
                     <option value="Ready to move">Ready to move</option>

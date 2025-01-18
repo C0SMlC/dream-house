@@ -5,7 +5,7 @@ import ThemeToggle from "./ThemeToggle";
 import HeroSlideshow from "./HeroSlideshow";
 import { RentalAgreementOverlay } from "./RentalAggrementForm";
 
-export default function Header() {
+export default function Header({ isAdminPage = false }) {
   const [showRentalAgreement, setShowRentalAgreement] = useState(false);
 
   return (
@@ -42,12 +42,19 @@ export default function Header() {
           </button>
         </div>
       </nav>
-      <HeroSlideshow />
 
-      <RentalAgreementOverlay
-        isVisible={showRentalAgreement}
-        onClose={() => setShowRentalAgreement(false)}
-      />
+      {isAdminPage ? (
+        <></>
+      ) : (
+        <>
+          {" "}
+          <HeroSlideshow />
+          <RentalAgreementOverlay
+            isVisible={showRentalAgreement}
+            onClose={() => setShowRentalAgreement(false)}
+          />
+        </>
+      )}
     </header>
   );
 }
