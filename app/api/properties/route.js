@@ -10,6 +10,7 @@ const s3 = new S3Client({
 });
 
 const propertySchema = z.object({
+  name: z.string(),
   type: z.enum(["Sell", "Rent", "PG"]),
   property_type: z.enum(["Residential", "Commercial"]),
   location: z.string().nonempty(),
@@ -26,20 +27,26 @@ const propertySchema = z.object({
   parking: z.boolean().optional(),
   total_floors: z.number().min(0).optional(),
   property_on: z.number().min(0).optional(),
-  availability: z.enum(["Ready to move", "Under Construction"]),
+  availability: z.enum(["", "Ready to move", "Under Construction"]),
   amenities: z.array(z.string()).optional(),
   features: z.array(z.string()).optional(),
   society_building_features: z.array(z.string()).optional(),
 });
 
 async function uploadToS3(file, type) {
-  console.log();
-  const fileName = `${type}/${Date.now()}-${file.name.trim()}`;
+  // Convert the file to buffer
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  // Clean the filename: replace all spaces with hyphens and trim
+  const cleanFileName = file.name.replace(/\s+/g, "-").trim();
+  const fileName = `${type}/${Date.now()}-${cleanFileName}`;
+
   const command = new PutObjectCommand({
     Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
     Key: fileName,
-    Body: file.buffer,
-    ContentType: file.mimetype,
+    Body: buffer,
+    ContentType: file.type,
   });
 
   await s3.send(command);
@@ -154,6 +161,80 @@ export async function POST(req) {
       JSON.stringify({
         success: true,
         id: propertyId,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
+
+export async function GET(req) {
+  try {
+    // Get type from URL parameters
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type");
+
+    if (!type) {
+      throw new Error("Type parameter is required");
+    }
+
+    // Validate type parameter
+    if (!["Sell", "Rent", "PG"].includes(type)) {
+      throw new Error("Invalid type parameter");
+    }
+
+    const propertyQuery = `
+      query getProperties($type:listing_type_enum) {
+        properties(where: {type: {_eq: $type}}) {
+          id
+          name
+          price
+          city
+          location
+          type
+          property_photos {
+            photo_url
+          } 
+          num_of_bedrooms
+        }
+      }
+    `;
+
+    const propertyResponse = await fetch(
+      process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-hasura-admin-secret": process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET,
+        },
+        body: JSON.stringify({
+          query: propertyQuery,
+          variables: { type },
+        }),
+      }
+    );
+
+    const properties = await propertyResponse.json();
+    if (properties.errors) {
+      throw new Error(properties.errors[0].message);
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: properties,
       }),
       {
         status: 200,
