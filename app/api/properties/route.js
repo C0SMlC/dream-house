@@ -2,10 +2,10 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
 const s3 = new S3Client({
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
@@ -79,22 +79,19 @@ export async function POST(req) {
       }
     `;
 
-    const propertyResponse = await fetch(
-      process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-hasura-admin-secret": process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET,
+    const propertyResponse = await fetch(process.env.HASURA_GRAPHQL_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
+      },
+      body: JSON.stringify({
+        query: propertyMutation,
+        variables: {
+          data: parsedData,
         },
-        body: JSON.stringify({
-          query: propertyMutation,
-          variables: {
-            data: parsedData,
-          },
-        }),
-      }
-    );
+      }),
+    });
 
     const propertyResult = await propertyResponse.json();
     if (propertyResult.errors) {
@@ -112,11 +109,11 @@ export async function POST(req) {
         }
       `;
 
-      await fetch(process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT, {
+      await fetch(process.env.HASURA_GRAPHQL_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-hasura-admin-secret": process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET,
+          "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
         },
         body: JSON.stringify({
           query: photosMutation,
@@ -224,20 +221,17 @@ export async function GET(req) {
       }
     `;
 
-    const propertyResponse = await fetch(
-      process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-hasura-admin-secret": process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET,
-        },
-        body: JSON.stringify({
-          query: propertyQuery,
-          variables: { type },
-        }),
-      }
-    );
+    const propertyResponse = await fetch(process.env.HASURA_GRAPHQL_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
+      },
+      body: JSON.stringify({
+        query: propertyQuery,
+        variables: { type },
+      }),
+    });
 
     const properties = await propertyResponse.json();
     if (properties.errors) {
