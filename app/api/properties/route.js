@@ -181,13 +181,22 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    // Get type from URL parameters
     console.log("Here in the call");
 
-    const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type");
+    // Safely access URL and handle potential undefined cases
+    let url;
+    try {
+      url = new URL(
+        req.url || "",
+        `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}`
+      );
+    } catch (e) {
+      console.error("URL parsing error:", e);
+      throw new Error("Invalid request URL");
+    }
 
-    console.log(type);
+    const type = url.searchParams.get("type");
+    console.log("Type:", type);
 
     if (!type) {
       throw new Error("Type parameter is required");
@@ -242,16 +251,30 @@ export async function GET(req) {
       }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          // Add CORS headers if needed
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        },
       }
     );
   } catch (error) {
     console.error("Error processing request:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({
+        success: false,
+        error: error.message,
+        // Add additional debug info in development
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      }),
       {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        },
       }
     );
   }
