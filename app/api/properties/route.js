@@ -266,7 +266,10 @@ export async function GET(req) {
         success: false,
         error: error.message,
         // Add additional debug info in development
-        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        stack:
+          process.env.NEXT_PUBLIC_NODE_ENV === "development"
+            ? error.stack
+            : undefined,
       }),
       {
         status: 400,
