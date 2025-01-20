@@ -43,7 +43,7 @@ export default function ProjectsList({ loading, title, subtitle, properties }) {
         {properties.map((property, index) => (
           <ProjectCard
             key={index}
-            title={property.name}
+            title={property.title}
             location={`${property.num_of_bedrooms} BHK Apartment, ${property.city}`}
             priceRange={property.price}
             images={property.property_photos.map((photo_url) => photo_url)}

@@ -8,7 +8,7 @@ const PropertyForm = () => {
   const [videos, setVideos] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    name,
+    title: "",
     type: "",
     property_type: "",
     location: "",
@@ -113,7 +113,7 @@ const PropertyForm = () => {
 
       setStep(1);
       setFormData({
-        name: "",
+        title: "",
         type: "",
         property_type: "",
         location: "",
@@ -192,12 +192,12 @@ const PropertyForm = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
+                    title
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="title"
+                    value={formData.title}
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md text-black"
                     required

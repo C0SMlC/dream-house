@@ -10,7 +10,7 @@ const s3 = new S3Client({
 });
 
 const propertySchema = z.object({
-  name: z.string(),
+  title: z.string(),
   type: z.enum(["Sell", "Rent", "PG"]),
   property_type: z.enum(["Residential", "Commercial"]),
   location: z.string().nonempty(),
@@ -198,7 +198,7 @@ export async function GET(req) {
       query getProperties($type:listing_type_enum) {
         properties(where: {type: {_eq: $type}}) {
           id
-          name
+          title
           price
           city
           location
