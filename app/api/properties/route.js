@@ -182,8 +182,12 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     // Get type from URL parameters
+    console.log("Here in the call");
+
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
+
+    console.log(type);
 
     if (!type) {
       throw new Error("Type parameter is required");
