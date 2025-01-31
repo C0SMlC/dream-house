@@ -42,7 +42,8 @@ export default function ProjectsList({ loading, title, subtitle, properties }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {properties.map((property, index) => (
           <ProjectCard
-            key={index}
+            key={property.id}
+            id={property.id}
             title={property.title}
             location={`${property.num_of_bedrooms} BHK Apartment, ${property.city}`}
             priceRange={property.price}

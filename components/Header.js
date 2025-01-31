@@ -4,8 +4,12 @@ import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import HeroSlideshow from "./HeroSlideshow";
 import { RentalAgreementOverlay } from "./RentalAggrementForm";
+import { NavBar } from "./Navbar";
 
-export default function Header({ isAdminPage = false }) {
+export default function Header({
+  isAdminPage = false,
+  propertiesPage = false,
+}) {
   const [showRentalAgreement, setShowRentalAgreement] = useState(false);
 
   return (
@@ -42,13 +46,11 @@ export default function Header({ isAdminPage = false }) {
           </button>
         </div>
       </nav>
-
-      {isAdminPage ? (
+      {isAdminPage || propertiesPage ? (
         <></>
       ) : (
         <>
           {" "}
-          <HeroSlideshow />
           <RentalAgreementOverlay
             isVisible={showRentalAgreement}
             onClose={() => setShowRentalAgreement(false)}

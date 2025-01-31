@@ -1,3 +1,4 @@
+import { Hasura } from "@/utils/Hasura";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
@@ -54,6 +55,90 @@ async function uploadToS3(file, type) {
   return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileName}`;
 }
 
+export async function GET(req) {
+  try {
+    let url;
+    try {
+      url = new URL(
+        req.url || "",
+        `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}`
+      );
+    } catch (e) {
+      console.error("URL parsing error:", e);
+      throw new Error("Invalid request URL");
+    }
+
+    const type = url.searchParams.get("type");
+
+    if (!type) {
+      throw new Error("Type parameter is required");
+    }
+
+    if (!["Sell", "Rent", "PG"].includes(type)) {
+      throw new Error("Invalid type parameter");
+    }
+
+    const propertyQuery = `
+      query getProperties($type: listing_type_enum) {
+        properties(where: {type: {_eq: $type}}) {
+          id
+          title
+          price
+          city
+          location
+          type
+          property_photos {
+            photo_url
+          } 
+          num_of_bedrooms
+        }
+      }
+    `;
+
+    const response = await Hasura(propertyQuery, { type });
+
+    if (response.errors) {
+      throw new Error(response.errors[0].message);
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: response,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+        stack:
+          process.env.NEXT_PUBLIC_NODE_ENV === "development"
+            ? error.stack
+            : undefined,
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        },
+      }
+    );
+  }
+}
+
+// POST method with updated Hasura usage
 export async function POST(req) {
   try {
     const formData = await req.formData();
@@ -79,21 +164,11 @@ export async function POST(req) {
       }
     `;
 
-    const propertyResponse = await fetch(process.env.HASURA_GRAPHQL_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
-      },
-      body: JSON.stringify({
-        query: propertyMutation,
-        variables: {
-          data: parsedData,
-        },
-      }),
+    const propertyResponse = await Hasura(propertyMutation, {
+      data: parsedData,
     });
-
     const propertyResult = await propertyResponse.json();
+
     if (propertyResult.errors) {
       throw new Error(propertyResult.errors[0].message);
     }
@@ -109,21 +184,11 @@ export async function POST(req) {
         }
       `;
 
-      await fetch(process.env.HASURA_GRAPHQL_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
-        },
-        body: JSON.stringify({
-          query: photosMutation,
-          variables: {
-            objects: photoUrls.map((url) => ({
-              property_id: propertyId,
-              photo_url: url,
-            })),
-          },
-        }),
+      await Hasura(photosMutation, {
+        objects: photoUrls.map((url) => ({
+          property_id: propertyId,
+          photo_url: url,
+        })),
       });
     }
 
@@ -136,21 +201,11 @@ export async function POST(req) {
         }
       `;
 
-      await fetch(process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-hasura-admin-secret": process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET,
-        },
-        body: JSON.stringify({
-          query: videosMutation,
-          variables: {
-            objects: videoUrls.map((url) => ({
-              property_id: propertyId,
-              video_url: url,
-            })),
-          },
-        }),
+      await Hasura(videosMutation, {
+        objects: videoUrls.map((url) => ({
+          property_id: propertyId,
+          video_url: url,
+        })),
       });
     }
 
@@ -171,107 +226,6 @@ export async function POST(req) {
       {
         status: 400,
         headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
-}
-
-export async function GET(req) {
-  try {
-    console.log("Here in the call");
-
-    // Safely access URL and handle potential undefined cases
-    let url;
-    try {
-      url = new URL(
-        req.url || "",
-        `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}`
-      );
-    } catch (e) {
-      console.error("URL parsing error:", e);
-      throw new Error("Invalid request URL");
-    }
-
-    const type = url.searchParams.get("type");
-    console.log("Type:", type);
-
-    if (!type) {
-      throw new Error("Type parameter is required");
-    }
-
-    // Validate type parameter
-    if (!["Sell", "Rent", "PG"].includes(type)) {
-      throw new Error("Invalid type parameter");
-    }
-
-    const propertyQuery = `
-      query getProperties($type:listing_type_enum) {
-        properties(where: {type: {_eq: $type}}) {
-          id
-          title
-          price
-          city
-          location
-          type
-          property_photos {
-            photo_url
-          } 
-          num_of_bedrooms
-        }
-      }
-    `;
-
-    const propertyResponse = await fetch(process.env.HASURA_GRAPHQL_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
-      },
-      body: JSON.stringify({
-        query: propertyQuery,
-        variables: { type },
-      }),
-    });
-
-    const properties = await propertyResponse.json();
-    if (properties.errors) {
-      throw new Error(properties.errors[0].message);
-    }
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data: properties,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          // Add CORS headers if needed
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error processing request:", error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: error.message,
-        // Add additional debug info in development
-        stack:
-          process.env.NEXT_PUBLIC_NODE_ENV === "development"
-            ? error.stack
-            : undefined,
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        },
       }
     );
   }

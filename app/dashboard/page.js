@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
 import ProjectsList from "@/components/ProjectsList";
-import Header from "@/components/Header";
 import { AboutSection } from "@/components/AboutSection";
 import { TestimonialsSection } from "@/components/Testimonial";
 import { ContactFormOverlay } from "@/components/ContactFormOverlay";
