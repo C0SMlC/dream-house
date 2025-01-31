@@ -536,7 +536,7 @@ const PropertyForm = () => {
                 </button>
               ) : (
                 <button
-                  type="submit"
+                  type={step === 4 ? "submit" : "button"}
                   disabled={uploading}
                   className="ml-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-green-400"
                 >

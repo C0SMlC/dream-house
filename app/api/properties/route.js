@@ -44,7 +44,7 @@ async function uploadToS3(file, type) {
   const fileName = `${type}/${Date.now()}-${cleanFileName}`;
 
   const command = new PutObjectCommand({
-    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+    Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
     Body: buffer,
     ContentType: file.type,
@@ -52,7 +52,7 @@ async function uploadToS3(file, type) {
 
   await s3.send(command);
 
-  return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileName}`;
+  return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 }
 
 export async function GET(req) {
@@ -167,13 +167,13 @@ export async function POST(req) {
     const propertyResponse = await Hasura(propertyMutation, {
       data: parsedData,
     });
-    const propertyResult = await propertyResponse.json();
+    // const propertyResult = await propertyResponse.json();
 
-    if (propertyResult.errors) {
-      throw new Error(propertyResult.errors[0].message);
+    if (propertyResponse.errors) {
+      throw new Error(propertyResponse.errors[0].message);
     }
 
-    const propertyId = propertyResult.data.insert_properties_one.id;
+    const propertyId = propertyResponse.data.insert_properties_one.id;
 
     if (photoUrls.length > 0) {
       const photosMutation = `
