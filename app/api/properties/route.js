@@ -71,7 +71,43 @@ export async function GET(req) {
     const type = url.searchParams.get("type");
 
     if (!type) {
-      throw new Error("Type parameter is required");
+      const propertyQuery = `
+      query getProperties{
+        properties{
+          id
+          title
+          price
+          city
+          location
+          type
+          property_photos {
+            photo_url
+          } 
+          num_of_bedrooms
+        }
+      }
+    `;
+
+      const response = await Hasura(propertyQuery);
+
+      if (response.errors) {
+        throw new Error(response.errors[0].message);
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: response,
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          },
+        }
+      );
     }
 
     if (!["Sell", "Rent", "PG"].includes(type)) {

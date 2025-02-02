@@ -26,8 +26,6 @@ export default async function PropertyPage({ params }) {
   const propertyResponse = await getProperty(propertyId);
   const property = propertyResponse.data;
 
-  console.log("property:", JSON.stringify(property));
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <PropertyHeader property={property} />

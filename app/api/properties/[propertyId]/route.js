@@ -43,7 +43,6 @@ export async function GET(request, { params }) {
   const response = await Hasura(getPropertyQuery, { id: Number(propertyId) });
 
   if (response.errors) {
-    console.log(JSON.stringify(response.errors));
     return NextResponse.json(
       {
         success: false,
@@ -67,6 +66,64 @@ export async function GET(request, { params }) {
     {
       success: true,
       data: response.data.properties_by_pk,
+    },
+    {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      },
+    }
+  );
+}
+
+export async function DELETE(request, { params }) {
+  let { propertyId } = await params;
+
+  const deletePropertyQuery = `mutation deleteProperty($propertyId: Int!) {
+                              delete_properties_by_pk(id: $propertyId) {
+                                id
+                              }
+                              delete_property_photos(where: {
+                                property_id: { _eq: $propertyId }
+                              }) {
+                                affected_rows
+                              }
+                              delete_property_videos(where: {
+                                property_id: { _eq: $propertyId }
+                              }) {
+                                affected_rows
+                              }
+                            }`;
+
+  const response = await Hasura(deletePropertyQuery, {
+    propertyId: Number(propertyId),
+  });
+
+  if (response.errors) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: response.errors[0].message,
+        stack:
+          process.env.NEXT_PUBLIC_NODE_ENV === "development"
+            ? response.errors[0].stack
+            : undefined,
+      },
+      {
+        status: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        },
+      }
+    );
+  }
+
+  return NextResponse.json(
+    {
+      success: true,
+      data: null,
     },
     {
       status: 200,

@@ -1,7 +1,13 @@
 import { Loader2 } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 
-export default function ProjectsList({ loading, title, subtitle, properties }) {
+export default function ProjectsList({
+  loading,
+  title,
+  subtitle,
+  properties,
+  type = "like",
+}) {
   if (loading) {
     return (
       <div className="my-8">
@@ -48,6 +54,7 @@ export default function ProjectsList({ loading, title, subtitle, properties }) {
             location={`${property.num_of_bedrooms} BHK Apartment, ${property.city}`}
             priceRange={property.price}
             images={property.property_photos.map((photo_url) => photo_url)}
+            type={type}
           />
         ))}
       </div>
