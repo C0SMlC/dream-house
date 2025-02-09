@@ -36,7 +36,7 @@ export default function ProjectCard({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/properties/${id + 1}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/properties/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -53,10 +53,9 @@ export default function ProjectCard({
         throw new Error(data.error || "Failed to delete property");
       }
 
-      // if (data.success) {
-      //   router.reload();
-      //   window.location.reload();
-      // }
+      if (data.success) {
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Failed to delete property:", error);
       alert(error.message);
