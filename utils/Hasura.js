@@ -2,7 +2,6 @@
 import axios from "axios";
 
 export async function Hasura(query, variables) {
-  console.log("variable: ", variables);
   try {
     if (!process.env.HASURA_GRAPHQL_ENDPOINT) {
       throw new Error("HASURA_GRAPHQL_ENDPOINT is not defined");

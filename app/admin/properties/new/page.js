@@ -29,6 +29,7 @@ const PropertyForm = () => {
     amenities: [],
     features: [],
     society_building_features: [],
+    password: "",
   });
 
   const handleInputChange = (e) => {
@@ -103,6 +104,7 @@ const PropertyForm = () => {
       const response = await fetch("/api/properties", {
         method: "POST",
         body: formDataToSend,
+        credentials: "include",
       });
 
       const responseData = await response.json();
@@ -111,31 +113,32 @@ const PropertyForm = () => {
         throw new Error(responseData.error || "Failed to submit property");
       }
 
-      setStep(1);
-      setFormData({
-        title: "",
-        type: "",
-        property_type: "",
-        location: "",
-        city: "",
-        locality: "",
-        house_no: "",
-        num_of_bedrooms: "",
-        num_of_bathroom: "",
-        balconies: "",
-        flat_area: "",
-        other_rooms: "",
-        furnishing: "",
-        parking: false,
-        total_floors: "",
-        property_on: "",
-        availability: "",
-        amenities: [],
-        features: [],
-        society_building_features: [],
-      });
-      setPhotos([]);
-      setVideos([]);
+      // setStep(1);
+      // setFormData({
+      //   title: "",
+      //   type: "",
+      //   property_type: "",
+      //   location: "",
+      //   city: "",
+      //   locality: "",
+      //   house_no: "",
+      //   num_of_bedrooms: "",
+      //   num_of_bathroom: "",
+      //   balconies: "",
+      //   flat_area: "",
+      //   other_rooms: "",
+      //   furnishing: "",
+      //   parking: false,
+      //   total_floors: "",
+      //   property_on: "",
+      //   availability: "",
+      //   amenities: [],
+      //   features: [],
+      //   society_building_features: [],
+      //   password: "",
+      // });
+      // setPhotos([]);
+      // setVideos([]);
 
       alert("Property submitted successfully!");
     } catch (error) {
@@ -510,6 +513,19 @@ const PropertyForm = () => {
                       </div>
                     ))}
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-md text-black"
+                    required
+                  />
                 </div>
               </div>
             )}

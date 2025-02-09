@@ -32,10 +32,16 @@ export default async function PropertyPage({ params }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
         <div className="lg:col-span-2">
           <Suspense fallback={<div>Loading gallery...</div>}>
-            <PropertyGallery
-              photos={property?.property_photos?.map((photo_url) => photo_url)}
-              videos={property?.property_videos?.map((video_url) => video_url)}
-            />
+            {
+              <PropertyGallery
+                photos={property?.property_photos?.map(
+                  (photo_url) => photo_url
+                )}
+                videos={property?.property_videos?.map(
+                  (video_url) => video_url
+                )}
+              />
+            }
           </Suspense>
           <PropertyOverview property={property} />
           <PropertyAmenities

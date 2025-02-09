@@ -1,6 +1,9 @@
 import { Hasura } from "@/utils/Hasura";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
+import argon2 from "argon2";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -174,12 +177,40 @@ export async function GET(req) {
   }
 }
 
-// POST method with updated Hasura usage
 export async function POST(req) {
   try {
-    const formData = await req.formData();
+    const cookieStore = await cookies();
+    const adminAuth = cookieStore.get("adminAuth");
 
+    if (!adminAuth) {
+      return NextResponse.json(
+        { success: false, message: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    const formData = await req.formData();
     const jsonFields = JSON.parse(formData.get("json"));
+    const password = jsonFields.password.toUpperCase();
+
+    if (!process.env[password]) {
+      return NextResponse.json(
+        { success: false, message: "Invalid key" },
+        { status: 401 }
+      );
+    }
+
+    const isVerified = await argon2.verify(
+      adminAuth.value,
+      process.env[password]
+    );
+
+    if (!isVerified) {
+      return NextResponse.json(
+        { success: false, message: "Invalid authentication" },
+        { status: 401 }
+      );
+    }
     const parsedData = propertySchema.parse(jsonFields);
 
     const photos = formData.getAll("photos");

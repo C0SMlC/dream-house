@@ -1,5 +1,7 @@
+import argon2 from "argon2";
 import { Hasura } from "@/utils/Hasura";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET(request, { params }) {
   let { propertyId } = await params;
@@ -78,23 +80,64 @@ export async function GET(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  let { propertyId } = await params;
+  // Destructure propertyId from params
+  const { propertyId } = await params;
 
-  const deletePropertyQuery = `mutation deleteProperty($propertyId: Int!) {
-                              delete_properties_by_pk(id: $propertyId) {
-                                id
-                              }
-                              delete_property_photos(where: {
-                                property_id: { _eq: $propertyId }
-                              }) {
-                                affected_rows
-                              }
-                              delete_property_videos(where: {
-                                property_id: { _eq: $propertyId }
-                              }) {
-                                affected_rows
-                              }
-                            }`;
+  // Get the admin cookie (which stores the hashed admin password)
+  const cookieStore = await cookies();
+  const adminCookie = cookieStore.get("adminAuth");
+
+  console.log("adminCookie", adminCookie);
+  if (!adminCookie) {
+    return NextResponse.json(
+      { success: false, message: "Admin authentication required." },
+      { status: 401 }
+    );
+  }
+  const storedHash = adminCookie.value;
+
+  // Get the provided password from the request body
+  let providedPassword;
+  try {
+    const body = await request.json();
+    providedPassword = process.env[body.password.toUpperCase()];
+    console.log(providedPassword);
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: "Invalid request body." },
+      { status: 400 }
+    );
+  }
+
+  if (!providedPassword) {
+    return NextResponse.json(
+      { success: false, message: "Password is required." },
+      { status: 400 }
+    );
+  }
+
+  // Verify the provided password against the stored hash
+  const isVerified = await argon2.verify(storedHash, providedPassword);
+  if (!isVerified) {
+    return NextResponse.json(
+      { success: false, message: "Invalid admin password." },
+      { status: 401 }
+    );
+  }
+
+  const deletePropertyQuery = `
+    mutation deleteProperty($propertyId: Int!) {
+      delete_properties_by_pk(id: $propertyId) {
+        id
+      }
+      delete_property_photos(where: { property_id: { _eq: $propertyId } }) {
+        affected_rows
+      }
+      delete_property_videos(where: { property_id: { _eq: $propertyId } }) {
+        affected_rows
+      }
+    }
+  `;
 
   const response = await Hasura(deletePropertyQuery, {
     propertyId: Number(propertyId),
@@ -121,15 +164,12 @@ export async function DELETE(request, { params }) {
   }
 
   return NextResponse.json(
-    {
-      success: true,
-      data: null,
-    },
+    { success: true, data: null },
     {
       status: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS DELETE",
       },
     }
   );

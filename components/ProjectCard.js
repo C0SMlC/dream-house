@@ -19,37 +19,47 @@ export default function ProjectCard({
 
   useEffect(() => {
     if (!images || images.length <= 1) return;
-
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
     }, 2000);
-
     return () => clearInterval(interval);
   }, [images]);
 
   const handleDelete = async (e) => {
     e.stopPropagation();
+
+    // Prompt the user to enter the admin password
+    const password = prompt("Enter admin password to confirm deletion:");
+    if (!password) return; // Cancel deletion if no password is provided
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/properties/${id + 1}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ password }),
+          credentials: "include",
         }
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to delete property");
+        throw new Error(data.error || "Failed to delete property");
       }
 
-      const data = await response.json();
-      if (data.success) {
-        router.reload();
-        window.location.reload();
-      }
+      // if (data.success) {
+      //   router.reload();
+      //   window.location.reload();
+      // }
     } catch (error) {
       console.error("Failed to delete property:", error);
+      alert(error.message);
     }
   };
 

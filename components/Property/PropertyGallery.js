@@ -46,14 +46,14 @@ export default function PropertyGallery({ photos, videos }) {
       <div className="relative w-full h-96">
         {allMedia[currentIndex]?.type === "photo" ? (
           <img
-            src={allMedia[currentIndex].url}
+            src={allMedia[currentIndex]?.url}
             alt={`Media ${currentIndex + 1}`}
             className="w-full h-full object-cover rounded-lg cursor-pointer"
             onClick={() => openModal(allMedia[currentIndex].url, false)}
           />
         ) : (
           <video
-            src={allMedia[currentIndex].url}
+            src={allMedia[currentIndex]?.url}
             className="w-full h-full object-cover rounded-lg cursor-pointer"
             onClick={() => openModal(allMedia[currentIndex].url, true)}
           />
