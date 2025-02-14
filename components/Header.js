@@ -5,12 +5,21 @@ import ThemeToggle from "./ThemeToggle";
 import HeroSlideshow from "./HeroSlideshow";
 import { RentalAgreementOverlay } from "./RentalAggrementForm";
 import { NavBar } from "./Navbar";
+import { ContactFormOverlay } from "./ContactFormOverlay";
 
 export default function Header({
   isAdminPage = false,
   propertiesPage = false,
 }) {
   const [showRentalAgreement, setShowRentalAgreement] = useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const handleCloseForm = () => {
+    setShowContactForm(false);
+  };
+
+  const handleShowForm = () => {
+    setShowContactForm(true);
+  };
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors z-50">
@@ -41,11 +50,19 @@ export default function Header({
           <button className="px-3 py-1 border rounded dark:border-gray-600 dark:text-gray-200">
             Send SMS
           </button>
-          <button className="px-3 py-1 border rounded dark:border-gray-600 dark:text-gray-200">
+          <button
+            className="px-3 py-1 border rounded dark:border-gray-600 dark:text-gray-200"
+            onClick={handleShowForm}
+          >
             Send Email
           </button>
         </div>
       </nav>
+
+      <ContactFormOverlay
+        isVisible={showContactForm}
+        onClose={handleCloseForm}
+      />
       {isAdminPage || propertiesPage ? (
         <></>
       ) : (

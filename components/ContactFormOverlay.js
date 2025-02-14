@@ -1,7 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import { Facebook, Instagram, MessageCircle, Youtube, X } from "lucide-react";
 
 export const ContactFormOverlay = ({ isVisible, onClose }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          formType: "contact",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
+        setSubmitStatus("error");
+      }
+    } catch (error) {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (!isVisible) return null;
 
   const socialIcons = {
@@ -24,45 +75,71 @@ export const ContactFormOverlay = ({ isVisible, onClose }) => {
 
           <div className="grid md:grid-cols-2 gap-8 p-8">
             {/* Contact Form Section */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">Contact us</h2>
-              <form className="space-y-4">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Your Name"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email Address"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  placeholder="Your Message"
+                  rows="4"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full ${
+                  isSubmitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+                } text-white py-2 rounded-lg transition-colors`}
+              >
+                {isSubmitting ? "Sending..." : "Submit"}
+              </button>
+              {submitStatus === "success" && (
+                <div className="text-green-600 text-center">
+                  Message sent successfully!
                 </div>
-                <div>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+              )}
+              {submitStatus === "error" && (
+                <div className="text-red-600 text-center">
+                  Failed to send message. Please try again.
                 </div>
-                <div>
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <textarea
-                    placeholder="Your Message"
-                    rows="4"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+              )}
+            </form>
 
             {/* Address and Social Section */}
             <div className="space-y-8">

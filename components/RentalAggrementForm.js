@@ -1,6 +1,58 @@
-const { X } = require("lucide-react");
+// RentalAgreementOverlay.js
+import React, { useState } from "react";
+import { X } from "lucide-react";
 
 export const RentalAgreementOverlay = ({ isVisible, onClose }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          formType: "rental",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", phone: "" });
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
+        setSubmitStatus("error");
+      }
+    } catch (error) {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -47,34 +99,60 @@ export const RentalAgreementOverlay = ({ isVisible, onClose }) => {
               Please fill this form to get an assured callback
             </p>
 
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="Name"
+                  required
                   className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
                 <input
                   type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="Contact no"
+                  required
                   className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email"
+                  required
                   className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={isSubmitting}
+                className={`w-full ${
+                  isSubmitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+                } text-white py-3 rounded-lg transition-colors`}
               >
-                SUBMIT
+                {isSubmitting ? "Submitting..." : "SUBMIT"}
               </button>
+
+              {submitStatus === "success" && (
+                <div className="text-green-600 dark:text-green-400 text-center">
+                  Request submitted successfully!
+                </div>
+              )}
+              {submitStatus === "error" && (
+                <div className="text-red-600 dark:text-red-400 text-center">
+                  Failed to submit request. Please try again.
+                </div>
+              )}
             </form>
 
             <div className="text-center mt-6 text-blue-600 dark:text-blue-400">
