@@ -6,6 +6,7 @@ import { AboutSection } from "@/components/AboutSection";
 import { TestimonialsSection } from "@/components/Testimonial";
 import { ContactFormOverlay } from "@/components/ContactFormOverlay";
 import { Loader2 } from "lucide-react";
+import AnimateOnScroll from "@/components/Animation/AnimateOnScroll";
 
 export default function Home() {
   const [showContactForm, setShowContactForm] = useState(false);
@@ -111,32 +112,47 @@ export default function Home() {
     <>
       <div className="relative">
         <div className="max-w-7xl mx-auto px-4">
-          <SearchBar />
-          <ProjectsList
-            title="Projects for Sale"
-            subtitle="Featured projects in Dronagiri, Navi Mumbai"
-            properties={properties.sell}
-            loading={loading.sell}
-          />
-          <ProjectsList
-            title="Rental Properties"
-            subtitle="Available rental properties in Dronagiri, Navi Mumbai"
-            properties={properties.rent}
-            loading={loading.rent}
-          />
-          <ProjectsList
-            title="PG Accommodations"
-            subtitle="Available PG accommodations in Dronagiri, Navi Mumbai"
-            properties={properties.pg}
-            loading={loading.pg}
-          />
+          <AnimateOnScroll animation="fade-down">
+            <SearchBar />
+          </AnimateOnScroll>
+
+          <AnimateOnScroll animation="fade-up" delay={200}>
+            <ProjectsList
+              title="Projects for Sale"
+              subtitle="Featured projects in Dronagiri, Navi Mumbai"
+              properties={properties.sell}
+              loading={loading.sell}
+            />
+          </AnimateOnScroll>
+
+          <AnimateOnScroll animation="fade-up" delay={400}>
+            <ProjectsList
+              title="Rental Properties"
+              subtitle="Available rental properties in Dronagiri, Navi Mumbai"
+              properties={properties.rent}
+              loading={loading.rent}
+            />
+          </AnimateOnScroll>
+
+          <AnimateOnScroll animation="fade-up" delay={600}>
+            <ProjectsList
+              title="PG Accommodations"
+              subtitle="Available PG accommodations in Dronagiri, Navi Mumbai"
+              properties={properties.pg}
+              loading={loading.pg}
+            />
+          </AnimateOnScroll>
         </div>
 
-        <div id="about-section">
-          <AboutSection />
-        </div>
+        <AnimateOnScroll animation="fade-left">
+          <div id="about-section">
+            <AboutSection />
+          </div>
+        </AnimateOnScroll>
 
-        <TestimonialsSection />
+        <AnimateOnScroll animation="fade-right">
+          <TestimonialsSection />
+        </AnimateOnScroll>
       </div>
 
       <ContactFormOverlay

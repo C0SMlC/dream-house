@@ -1,5 +1,6 @@
 import { Loader2 } from "lucide-react";
 import ProjectCard from "./ProjectCard";
+import AnimateOnScroll from "./Animation/AnimateOnScroll";
 
 export default function ProjectsList({
   loading,
@@ -42,20 +43,27 @@ export default function ProjectsList({
   }
   return (
     <section className="my-12">
-      <h2 className="text-2xl font-bold mb-2">{title}</h2>
-      <p className="text-gray-600 mb-6">{subtitle}</p>
-
+      <AnimateOnScroll animation="fade-up">
+        <h2 className="text-2xl font-bold mb-2">{title}</h2>
+        <p className="text-gray-600 mb-6">{subtitle}</p>
+      </AnimateOnScroll>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {properties.map((property, index) => (
-          <ProjectCard
+          <AnimateOnScroll
             key={property.id}
-            id={property.id}
-            title={property.title}
-            location={`${property.num_of_bedrooms} BHK Apartment, ${property.city}`}
-            priceRange={property.price}
-            images={property.property_photos.map((photo_url) => photo_url)}
-            type={type}
-          />
+            animation="scale-up"
+            delay={index * 100}
+          >
+            <ProjectCard
+              key={property.id}
+              id={property.id}
+              title={property.title}
+              location={`${property.num_of_bedrooms} BHK Apartment, ${property.city}`}
+              priceRange={property.price}
+              images={property.property_photos.map((photo_url) => photo_url)}
+              type={type}
+            />
+          </AnimateOnScroll>
         ))}
       </div>
     </section>

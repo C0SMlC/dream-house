@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import PropertyDetails from "@/components/Property/PropertyDetails";
 import PropertyHeader from "@/components/Property/PropertyHeader";
-import PropertyGallery from "@/components/Property/PropertyGallery";
 import PropertyOverview from "@/components/Property/PropertyOverview";
 import PropertyAmenities from "@/components/Property/PropertyAmenities";
+import PropertySchema from "@/components/PropertySchema";
+import TabbedGallery from "@/components/TabbedGallery"; // updated import
 
 async function getProperty(propertyId) {
   try {
@@ -21,37 +22,86 @@ async function getProperty(propertyId) {
   }
 }
 
+export async function generateMetadata({ params }) {
+  const { propertyId } = await params;
+  const propertyResponse = await getProperty(propertyId);
+  const property = propertyResponse.data;
+
+  const title = `${property.title} | ${property.locality}, ${property.city}`;
+  const description = `${property.num_of_bedrooms} BHK ${
+    property.property_type
+  } for ${property.type} in ${property.locality}, ${property.city}. ${
+    property.flat_area
+  } sq ft. Features include ${property.amenities?.join(", ")}.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: property.property_photos?.[0]?.photo_url
+        ? [{ url: property.property_photos[0].photo_url }]
+        : null,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: property.property_photos?.[0]?.photo_url
+        ? [property.property_photos[0].photo_url]
+        : null,
+    },
+  };
+}
+
 export default async function PropertyPage({ params }) {
   const { propertyId } = await params;
   const propertyResponse = await getProperty(propertyId);
   const property = propertyResponse.data;
 
+  console.log(property);
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <PropertyHeader property={property} />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-        <div className="lg:col-span-2">
-          <Suspense fallback={<div>Loading gallery...</div>}>
-            {
-              <PropertyGallery
+    <>
+      <PropertySchema property={property} />
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <header>
+          <PropertyHeader property={property} />
+        </header>
+
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+          {/* Main Content - 2 columns on large screens */}
+          <article className="lg:col-span-2">
+            {/* Use Suspense while loading */}
+            <Suspense fallback={<div>Loading gallery...</div>}>
+              <TabbedGallery
                 photos={property?.property_photos?.map(
-                  (photo_url) => photo_url
+                  (photo) => photo.photo_url
                 )}
-                videos={property?.property_videos?.map(
-                  (video_url) => video_url
-                )}
+                videos={property?.property_videos?.map((video) => video)}
               />
-            }
-          </Suspense>
-          <PropertyOverview property={property} />
-          <PropertyAmenities
-            amenities={property.amenities}
-            features={property.features}
-            societyFeatures={property.society_building_features}
-          />
-        </div>
-        <PropertyDetails property={property} />
-      </div>
-    </div>
+            </Suspense>
+
+            <section aria-label="Property Overview">
+              <PropertyOverview property={property} />
+            </section>
+
+            <section aria-label="Property Features">
+              <PropertyAmenities
+                amenities={property.amenities}
+                features={property.features}
+                societyFeatures={property.society_building_features}
+              />
+            </section>
+          </article>
+
+          <aside>
+            <PropertyDetails property={property} />
+          </aside>
+        </section>
+      </main>
+    </>
   );
 }

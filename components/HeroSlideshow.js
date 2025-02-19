@@ -21,7 +21,7 @@ export default function HeroSlideshow() {
   }, []);
 
   return (
-    <div className="relative h-[500px] w-full">
+    <div className="relative h-[750px] w-full">
       {images.map((src, index) => (
         <Image
           key={src}

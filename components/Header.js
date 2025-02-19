@@ -22,7 +22,7 @@ export default function Header({
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors z-50">
+    <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors z-50 sticky top-0">
       <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="font-bold text-xl">
@@ -47,14 +47,11 @@ export default function Header({
             <span className="animate-pulse w-2 h-2 rounded-full bg-red-500"></span>
             RENTAL AGREEMENT
           </button>
-          <button className="px-3 py-1 border rounded dark:border-gray-600 dark:text-gray-200">
-            Send SMS
-          </button>
           <button
             className="px-3 py-1 border rounded dark:border-gray-600 dark:text-gray-200"
             onClick={handleShowForm}
           >
-            Send Email
+            GET A CALL
           </button>
         </div>
       </nav>

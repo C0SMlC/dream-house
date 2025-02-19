@@ -1,6 +1,13 @@
-// RentalAgreementOverlay.js
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import {
+  X,
+  User,
+  Phone,
+  Mail,
+  FileText,
+  ArrowRight,
+  CheckCircle,
+} from "lucide-react";
 
 export const RentalAgreementOverlay = ({ isVisible, onClose }) => {
   const [formData, setFormData] = useState({
@@ -55,108 +62,170 @@ export const RentalAgreementOverlay = ({ isVisible, onClose }) => {
 
   if (!isVisible) return null;
 
+  const benefits = [
+    "Quick Documentation",
+    "Legal Verification",
+    "Digital Signatures",
+    "Home Visit Available",
+    "Government Approved",
+    "24/7 Support",
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl relative overflow-hidden">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          <X size={24} />
-        </button>
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="rental-form-title"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden transform-gpu animate-scale-up"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative grid md:grid-cols-2">
+          {/* Left Section - Content */}
+          <div className="p-8 lg:p-12 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
+            <div className="absolute top-4 left-4">
+              <FileText className="h-8 w-8 text-white/80" />
+            </div>
 
-        {/* Agreement Image */}
-        <div className="w-full h-72 bg-neutral-100 dark:bg-gray-700">
-          <img
-            src="/Agreement.jpg"
-            alt="Rental Agreement"
-            className="w-full h-full object-cover"
-          />
-        </div>
+            <button
+              onClick={onClose}
+              className="absolute left-4 top-4 text-white/80 hover:text-white transition-colors"
+              aria-label="Close rental agreement form"
+            >
+              <X className="h-6 w-6" />
+            </button>
 
-        <div className="grid md:grid-cols-2">
-          {/* Left Section */}
-          <div className="p-8 bg-blue-600 text-white">
-            <h2 className="text-2xl font-bold mb-2">Online Rent Agreement</h2>
-            <p className="mb-6">
-              Best Online Rent Agreement Services in Navi Mumbai
-            </p>
-            <div className="relative w-full max-w-md">
-              <img
-                src="/Agreement1.jpg"
-                alt="Agreement Illustration"
-                className="w-full"
-              />
+            <div className="mt-12">
+              <h2 id="rental-form-title" className="text-3xl font-bold mb-4">
+                Online Rental Agreement
+              </h2>
+              <p className="text-white/90 text-lg mb-8">
+                Get your rental agreement prepared online with legal
+                verification
+              </p>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  {benefits.map((benefit, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <CheckCircle className="h-5 w-5 text-blue-300" />
+                      <span className="text-sm text-white/90">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 p-4 bg-white/10 rounded-xl backdrop-blur">
+                  <p className="text-sm text-white/90">
+                    &quot;Streamlined process, professional service. Got my
+                    agreement done in 24 hours!&quot;
+                  </p>
+                  <p className="mt-2 text-white/80 text-sm font-medium">
+                    — Recent Customer
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right Section - Form */}
-          <div className="p-8 bg-white dark:bg-gray-800">
-            <h3 className="text-xl font-semibold mb-4 dark:text-white">
-              Get a Call back
+          <div className="p-8 lg:p-12 bg-white dark:bg-gray-900">
+            <h3 className="text-2xl font-semibold mb-2 dark:text-white">
+              Request a Callback
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Please fill this form to get an assured callback
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              Fill out the form below and we&apos;ll get back to you within 24
+              hours
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Name"
+                  placeholder="Full Name"
                   required
-                  className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200"
                 />
               </div>
-              <div>
+
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Contact no"
+                  placeholder="Phone Number"
                   required
-                  className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200"
                 />
               </div>
-              <div>
+
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Email"
+                  placeholder="Email Address"
                   required
-                  className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-200"
                 />
               </div>
+
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full ${
-                  isSubmitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
-                } text-white py-3 rounded-lg transition-colors`}
+                className={`
+                  w-full flex items-center justify-center gap-2 
+                  ${
+                    isSubmitting
+                      ? "bg-blue-400"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  } 
+                  text-white py-3.5 rounded-xl transition-all duration-200 
+                  transform hover:-translate-y-0.5 hover:shadow-lg
+                `}
               >
-                {isSubmitting ? "Submitting..." : "SUBMIT"}
+                {isSubmitting ? (
+                  "Processing..."
+                ) : (
+                  <>
+                    Get Started Now
+                    <ArrowRight className="h-5 w-5" />
+                  </>
+                )}
               </button>
 
               {submitStatus === "success" && (
-                <div className="text-green-600 dark:text-green-400 text-center">
-                  Request submitted successfully!
+                <div className="p-4 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl text-center animate-fade-in">
+                  Success! We&apos;ll contact you shortly.
                 </div>
               )}
               {submitStatus === "error" && (
-                <div className="text-red-600 dark:text-red-400 text-center">
-                  Failed to submit request. Please try again.
+                <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-center animate-fade-in">
+                  Something went wrong. Please try again.
                 </div>
               )}
             </form>
 
-            <div className="text-center mt-6 text-blue-600 dark:text-blue-400">
-              For Inquiry Contact us on 9137821151
+            <div className="mt-8 text-center">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Need immediate assistance?
+              </p>
+              <a
+                href="tel:+919137821151"
+                className="text-blue-600 dark:text-blue-400 font-semibold text-lg hover:text-blue-700 transition-colors"
+              >
+                +91 91378 21151
+              </a>
             </div>
           </div>
         </div>

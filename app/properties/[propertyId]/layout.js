@@ -3,6 +3,7 @@ import "../../globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { NavBar } from "@/components/Navbar";
 import Header from "@/components/Header";
+import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function PropertyLayout({ children }) {
         <ThemeProvider>
           <Header />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

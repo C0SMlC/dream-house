@@ -30,7 +30,6 @@ export default function ProjectCard({
   const handleDelete = async (e) => {
     e.stopPropagation();
 
-    // Prompt the user to enter the admin password
     const password = prompt("Enter admin password to confirm deletion:");
     if (!password) return; // Cancel deletion if no password is provided
 
