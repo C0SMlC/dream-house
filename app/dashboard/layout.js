@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import Header from "@/components/Header";
 import { NavBar } from "@/components/Navbar";
 import HeroSlideshow from "@/components/HeroSlideshow";
-import Footer from "@/components/footer";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
