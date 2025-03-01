@@ -130,7 +130,7 @@ export default function ProjectCard({
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">{location}</p>
         <p className="text-sm font-semibold mt-2 dark:text-gray-200">
-          {priceRange}
+          ₹{priceRange}
         </p>
       </div>
     </div>

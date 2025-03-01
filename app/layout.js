@@ -1,6 +1,10 @@
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import Header from "@/components/Header";
+import { NavBar } from "@/components/Navbar";
+import HeroSlideshow from "@/components/HeroSlideshow";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +26,58 @@ export const metadata = {
     "rent",
     "sale",
     "property listings",
+    "Ulwe",
+    "1bhk",
+    "1Bhk",
+    "Plot",
+    "investments",
+    "Apartment",
+    "living room",
+    "Hall",
+    "Balcony",
+    "kitchen",
+    "Agreement",
+    "Rental Agreement",
+    "Online registered Agreement",
+    "online agreement",
+    "property on lease",
+    "Project",
+    "construction",
+    "ready to move",
+    "Under construction",
+    "Unfurnished",
+    "Semi Furnished",
+    "Furnished",
+    "Car Parking",
+    "covered Parking",
+    "open parking",
+    "Surana",
+    "Prajapati",
+    "Delta",
+    "Akshar",
+    "GAMi",
+    "Tricity",
+    "Villa",
+    "Home",
+    "House",
+    "returns",
+    "profitable",
+    "high returns",
+    "development",
+    "Relience development",
+    "alibag",
+    "nerul",
+    "Maharashtra",
+    "Door step visit",
+    "Seawoods",
+    "Kharghar",
+    "Vashi",
+    "Belapur",
+    "Location",
+    "Dream Homes",
+    "visit",
+    "call",
+    "contact us",
   ],
   robots: {
     index: true,
@@ -60,13 +116,15 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default function PropertiesLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.className} bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200`}
+        className={`${inter.className} bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200 flex flex-col min-h-screen`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <main className="flex-grow">{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );

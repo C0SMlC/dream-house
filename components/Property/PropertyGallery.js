@@ -1,8 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
+import Image from "next/image";
 
-export default function PropertyGallery({ photos, videos }) {
+export default function PropertyGallery({
+  photos,
+  videos,
+  propertyTitle = "Property",
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -10,10 +15,16 @@ export default function PropertyGallery({ photos, videos }) {
   const [isVideo, setIsVideo] = useState(false);
 
   const allMedia = [
-    ...(photos?.map((photo) => ({ type: "photo", url: photo.photo_url })) ||
-      []),
-    ...(videos?.map((video) => ({ type: "video", url: video.video_url })) ||
-      []),
+    ...(photos?.map((photo, index) => ({
+      type: "photo",
+      url: photo.photo_url,
+      alt: photo.alt_text || `${propertyTitle} - Photo ${index + 1}`,
+    })) || []),
+    ...(videos?.map((video, index) => ({
+      type: "video",
+      url: video.video_url,
+      title: video.title || `${propertyTitle} - Video ${index + 1}`,
+    })) || []),
   ];
 
   useEffect(() => {
@@ -42,21 +53,44 @@ export default function PropertyGallery({ photos, videos }) {
   };
 
   return (
-    <div className="relative bg-gray-100 rounded-lg p-4 dark:bg-gray-800">
+    <section
+      className="relative bg-gray-100 rounded-lg p-4 dark:bg-gray-800"
+      aria-label={`${propertyTitle} Gallery`}
+    >
       <div className="relative w-full h-96">
         {allMedia[currentIndex]?.type === "photo" ? (
-          <img
-            src={allMedia[currentIndex]?.url}
-            alt={`Media ${currentIndex + 1}`}
-            className="w-full h-full object-cover rounded-lg cursor-pointer"
-            onClick={() => openModal(allMedia[currentIndex].url, false)}
-          />
+          <figure>
+            <div className="relative w-full h-full">
+              <Image
+                src={allMedia[currentIndex]?.url}
+                alt={allMedia[currentIndex]?.alt || `${propertyTitle} photo`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={currentIndex === 0}
+                className="object-cover rounded-lg cursor-pointer"
+                onClick={() => openModal(allMedia[currentIndex].url, false)}
+              />
+            </div>
+            <figcaption className="sr-only">
+              {allMedia[currentIndex]?.alt}
+            </figcaption>
+          </figure>
         ) : (
-          <video
-            src={allMedia[currentIndex]?.url}
-            className="w-full h-full object-cover rounded-lg cursor-pointer"
-            onClick={() => openModal(allMedia[currentIndex].url, true)}
-          />
+          <figure>
+            <video
+              src={allMedia[currentIndex]?.url}
+              title={allMedia[currentIndex]?.title}
+              className="w-full h-full object-cover rounded-lg cursor-pointer"
+              onClick={() => openModal(allMedia[currentIndex].url, true)}
+              preload="metadata"
+              aria-label={
+                allMedia[currentIndex]?.title || `${propertyTitle} video`
+              }
+            />
+            <figcaption className="sr-only">
+              {allMedia[currentIndex]?.title}
+            </figcaption>
+          </figure>
         )}
 
         {/* Navigation buttons */}
@@ -64,12 +98,14 @@ export default function PropertyGallery({ photos, videos }) {
           <button
             onClick={handlePrevious}
             className="p-2 rounded-full bg-black/50 text-white hover:bg-black/70"
+            aria-label="Previous image"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={handleNext}
             className="p-2 rounded-full bg-black/50 text-white hover:bg-black/70"
+            aria-label="Next image"
           >
             <ChevronRight size={24} />
           </button>
@@ -79,13 +115,18 @@ export default function PropertyGallery({ photos, videos }) {
         <button
           onClick={() => setIsPlaying(!isPlaying)}
           className="absolute bottom-4 right-4 p-2 rounded-full bg-black/50 text-white hover:bg-black/70"
+          aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+          aria-pressed={isPlaying}
         >
           {isPlaying ? <Pause size={24} /> : <Play size={24} />}
         </button>
       </div>
 
       {/* Thumbnails */}
-      <div className="mt-4 grid grid-cols-6 gap-2">
+      <nav
+        className="mt-4 grid grid-cols-6 gap-2"
+        aria-label="Gallery thumbnails"
+      >
         {allMedia.map((item, index) => (
           <div
             key={index}
@@ -93,27 +134,48 @@ export default function PropertyGallery({ photos, videos }) {
             className={`cursor-pointer rounded-lg overflow-hidden h-16 ${
               currentIndex === index ? "ring-2 ring-blue-500" : ""
             }`}
+            role="button"
+            aria-label={`View ${item.type === "photo" ? "photo" : "video"} ${
+              index + 1
+            }`}
+            aria-current={currentIndex === index}
           >
             {item.type === "photo" ? (
-              <img
-                src={item.url}
-                alt={`Thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={item.url}
+                  alt={item.alt || `Thumbnail ${index + 1}`}
+                  fill
+                  sizes="100px"
+                  className="object-cover"
+                  loading="lazy"
+                />
+              </div>
             ) : (
-              <video src={item.url} className="w-full h-full object-cover" />
+              <video
+                src={item.url}
+                className="w-full h-full object-cover"
+                title={item.title}
+                preload="none"
+              />
             )}
           </div>
         ))}
-      </div>
+      </nav>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Media viewer"
+        >
           <div className="relative max-w-6xl max-h-screen p-4">
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-2 right-2 p-2 rounded-full bg-black/50 text-white hover:bg-black/70"
+              aria-label="Close"
             >
               <X size={24} />
             </button>
@@ -122,17 +184,22 @@ export default function PropertyGallery({ photos, videos }) {
                 src={selectedItem}
                 controls
                 className="max-h-[90vh] w-auto"
+                preload="auto"
+                autoPlay
               />
             ) : (
-              <img
+              <Image
                 src={selectedItem}
                 alt="Enlarged view"
-                className="max-h-[90vh] w-auto"
+                width={1200}
+                height={800}
+                className="max-h-[90vh] w-auto object-contain"
+                priority
               />
             )}
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

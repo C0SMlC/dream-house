@@ -71,7 +71,7 @@ export default async function PropertyPage({ params }) {
           <PropertyHeader property={property} />
         </header>
 
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8 mb-8">
           {/* Main Content - 2 columns on large screens */}
           <article className="lg:col-span-2">
             {/* Use Suspense while loading */}

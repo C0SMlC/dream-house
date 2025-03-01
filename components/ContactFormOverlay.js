@@ -225,6 +225,9 @@ export const ContactFormOverlay = ({ isVisible, onClose }) => {
               <div className="absolute bottom-0 right-0 opacity-10">
                 <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
                   <circle cx="100" cy="100" r="100" fill="currentColor" />
+                  <circle cx="100" cy="100" r="50" fill="red" />
+                  <circle cx="100" cy="100" r="30" fill="yellow" />
+                  <circle cx="100" cy="100" r="20" fill="black" />
                 </svg>
               </div>
             </div>

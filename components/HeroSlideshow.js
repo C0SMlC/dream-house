@@ -21,7 +21,7 @@ export default function HeroSlideshow() {
   }, []);
 
   return (
-    <div className="relative h-[750px] w-full">
+    <div className="relative w-full h-[300px] sm:h-[450px] md:h-[550px] lg:h-[450px] xl:h-[650px] overflow-x-hidden">
       {images.map((src, index) => (
         <Image
           key={src}
@@ -32,6 +32,7 @@ export default function HeroSlideshow() {
             index === currentIndex ? "opacity-100" : "opacity-0"
           }`}
           priority={index === 0}
+          sizes="100vw"
         />
       ))}
     </div>

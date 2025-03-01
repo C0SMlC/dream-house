@@ -12,7 +12,7 @@ export const TestimonialsSection = () => {
       location: "Navi Mumbai",
       rating: 5,
       text: "I have known this builder from quite long as one of my friends has contacted the builder for his own property building matter. I selected this builder for their transparency and quality work.",
-      image: "/testimonials/pratik.jpg", // Add actual image path
+      image: "/hero1.jpg", // Add actual image path
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export const TestimonialsSection = () => {
       location: "Dronagiri",
       rating: 5,
       text: "Exceptional service and professional approach. The team guided me throughout the property buying process making it seamless.",
-      image: "/testimonials/rahul.jpg",
+      image: "/hero1.jpg",
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export const TestimonialsSection = () => {
       location: "Navi Mumbai",
       rating: 5,
       text: "As a first-time property buyer, I was nervous but their team made the entire process smooth and transparent. Highly recommended!",
-      image: "/testimonials/priya.jpg",
+      image: "/hero1.jpg",
     },
   ];
 

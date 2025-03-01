@@ -59,7 +59,6 @@ export default function Home() {
     fetchPropertiesByType("PG");
   }, []);
 
-  // Scroll handler remains the same
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPosition = window.scrollY;

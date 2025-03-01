@@ -6,6 +6,9 @@ const PropertyForm = () => {
   const [step, setStep] = useState(1);
   const [photos, setPhotos] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [amenityInput, setAmenityInput] = useState("");
+  const [featureInput, setFeatureInput] = useState("");
+  const [societyFeatureInput, setSocietyFeatureInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -40,11 +43,21 @@ const PropertyForm = () => {
     }));
   };
 
-  const handleArrayInput = (e, field) => {
-    const values = e.target.value.split(",").map((item) => item.trim());
+  const handleAddItem = (field, value, clearInput) => {
+    if (!value.trim()) return;
+
     setFormData((prev) => ({
       ...prev,
-      [field]: values,
+      [field]: [...prev[field], value.trim()],
+    }));
+
+    clearInput("");
+  };
+
+  const handleRemoveItem = (field, index) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index),
     }));
   };
 
@@ -349,8 +362,172 @@ const PropertyForm = () => {
                 </div>
               </div>
             )}
-
             {step === 3 && (
+              <div className="space-y-4">
+                {/* Existing fields */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Other Rooms
+                  </label>
+                  <input
+                    type="text"
+                    name="other_rooms"
+                    value={formData.other_rooms}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-md text-black"
+                  />
+                </div>
+
+                {/* ...other existing fields */}
+
+                {/* New Amenities field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Amenities
+                  </label>
+                  <div className="flex space-x-2 mb-2">
+                    <input
+                      type="text"
+                      value={amenityInput}
+                      onChange={(e) => setAmenityInput(e.target.value)}
+                      className="flex-1 p-2 border rounded-md text-black"
+                      placeholder="Add an amenity (e.g., Swimming Pool)"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleAddItem(
+                          "amenities",
+                          amenityInput,
+                          setAmenityInput
+                        )
+                      }
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {formData.amenities.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {formData.amenities.map((item, index) => (
+                        <div
+                          key={index}
+                          className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full flex items-center"
+                        >
+                          <span>{item}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem("amenities", index)}
+                            className="ml-2 text-red-500 hover:text-red-700"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Features field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Features
+                  </label>
+                  <div className="flex space-x-2 mb-2">
+                    <input
+                      type="text"
+                      value={featureInput}
+                      onChange={(e) => setFeatureInput(e.target.value)}
+                      className="flex-1 p-2 border rounded-md text-black"
+                      placeholder="Add a feature (e.g., Modular Kitchen)"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleAddItem("features", featureInput, setFeatureInput)
+                      }
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {formData.features.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {formData.features.map((item, index) => (
+                        <div
+                          key={index}
+                          className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full flex items-center"
+                        >
+                          <span>{item}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem("features", index)}
+                            className="ml-2 text-red-500 hover:text-red-700"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Society/Building Features field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Society/Building Features
+                  </label>
+                  <div className="flex space-x-2 mb-2">
+                    <input
+                      type="text"
+                      value={societyFeatureInput}
+                      onChange={(e) => setSocietyFeatureInput(e.target.value)}
+                      className="flex-1 p-2 border rounded-md text-black"
+                      placeholder="Add a society feature (e.g., 24/7 Security)"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleAddItem(
+                          "society_building_features",
+                          societyFeatureInput,
+                          setSocietyFeatureInput
+                        )
+                      }
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {formData.society_building_features.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {formData.society_building_features.map((item, index) => (
+                        <div
+                          key={index}
+                          className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full flex items-center"
+                        >
+                          <span>{item}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleRemoveItem(
+                                "society_building_features",
+                                index
+                              )
+                            }
+                            className="ml-2 text-red-500 hover:text-red-700"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -423,7 +600,7 @@ const PropertyForm = () => {
               </div>
             )}
 
-            {step === 4 && (
+            {step === 5 && (
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -541,7 +718,7 @@ const PropertyForm = () => {
                   Previous
                 </button>
               )}
-              {step < 4 ? (
+              {step < 5 ? (
                 <button
                   type="button"
                   onClick={() => setStep(step + 1)}
@@ -552,7 +729,7 @@ const PropertyForm = () => {
                 </button>
               ) : (
                 <button
-                  type={step === 4 ? "submit" : "button"}
+                  type={step === 5 ? "submit" : "button"}
                   disabled={uploading}
                   className="ml-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-green-400"
                 >
@@ -568,3 +745,7 @@ const PropertyForm = () => {
 };
 
 export default PropertyForm;
+
+// ...existing code
+
+// ...existing code

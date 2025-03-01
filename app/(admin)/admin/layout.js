@@ -1,9 +1,9 @@
 import { Inter } from "next/font/google";
-import "../../globals.css";
+import "@/app/globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { NavBar } from "@/components/Navbar";
+import { cookies } from "next/headers";
+import AdminAuthModal from "@/components/AdminOverlay/AdminAuthModel";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,7 +12,14 @@ export const metadata = {
   description: "Your Dream Home",
 };
 
-export default function PropertyLayout({ children }) {
+export default async function PropertyLayout({ children }) {
+  const cookieStore = await cookies();
+  const adminAuth = cookieStore.get("adminAuth");
+
+  if (!adminAuth) {
+    return <AdminAuthModal />;
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -21,7 +28,6 @@ export default function PropertyLayout({ children }) {
         <ThemeProvider>
           <Header />
           {children}
-          <Footer />
         </ThemeProvider>
       </body>
     </html>
