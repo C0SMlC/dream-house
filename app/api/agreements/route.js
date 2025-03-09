@@ -5,14 +5,18 @@ import argon2 from "argon2";
 import { Hasura } from "@/utils/Hasura";
 import { google } from "googleapis";
 
-// Google Calendar setup
 const setupGoogleCalendar = () => {
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY;
   const auth = new google.auth.JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    key: privateKey.replace(/\\n/g, "\n"),
     scopes: ["https://www.googleapis.com/auth/calendar"],
   });
 
+  console.log(
+    "Calender: ",
+    process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
+  );
   return google.calendar({ version: "v3", auth });
 };
 
@@ -82,27 +86,54 @@ export async function POST(req) {
 
     const agreementId = response.data.insert_rental_agreements_one.id;
 
-    // Create Google Calendar event
     try {
       const calendar = setupGoogleCalendar();
 
       const event = {
-        summary: `Rental Agreement: ${formattedData.token_no}`,
+        summary: `Rental Agreement Ending Soon: ${formattedData.token_no}`,
         location: formattedData.address,
         description: `
-          Agreement Details:
-          - Flat/Shop: ${formattedData.flat_shop_no}
-          - Owner: ${formattedData.owner_name} (${formattedData.owner_phone})
-          - Type: ${formattedData.type}
-          - Tenant Phone: ${formattedData.tenant_phone}
-        `,
+    REMINDER: This rental agreement will end on ${new Date(
+      formattedData.end_date
+    ).toLocaleDateString()}.
+    
+    Agreement Details:
+    - Flat/Shop: ${formattedData.flat_shop_no}
+    - Owner: ${formattedData.owner_name} (${formattedData.owner_phone})
+    - Type: ${formattedData.type}
+    - Tenant Phone: ${formattedData.tenant_phone}
+    - Original Start Date: ${new Date(
+      formattedData.start_date
+    ).toLocaleDateString()}
+    - End Date: ${new Date(formattedData.end_date).toLocaleDateString()}
+  `,
         start: {
-          date: new Date(formattedData.start_date).toISOString().split("T")[0],
+          // Start date 7 days before end date
+          date: new Date(
+            new Date(formattedData.end_date).getTime() - 7 * 24 * 60 * 60 * 1000
+          )
+            .toISOString()
+            .split("T")[0],
+          timeZone: "Asia/Kolkata",
         },
         end: {
-          date: new Date(formattedData.end_date).toISOString().split("T")[0],
+          date: new Date(
+            new Date(formattedData.end_date).getTime() -
+              7 * 24 * 60 * 60 * 1000 +
+              24 * 60 * 60 * 1000
+          )
+            .toISOString()
+            .split("T")[0],
+          timeZone: "Asia/Kolkata",
         },
-        colorId: formattedData.type === "Residential" ? "1" : "2", // Different colors for different types
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: "email", minutes: 24 * 60 },
+            { method: "popup", minutes: 60 },
+          ],
+        },
+        colorId: formattedData.type === "Residential" ? "1" : "2",
       };
 
       const calendarEvent = await calendar.events.insert({
@@ -110,7 +141,11 @@ export async function POST(req) {
         resource: event,
       });
 
-      // Update the agreement with the calendar event ID
+      console.log(
+        "Calendar event created successfully:",
+        calendarEvent.data.id
+      );
+
       const updateMutation = `
         mutation UpdateAgreementCalendarId($id: Int!, $calendar_event_id: String!) {
           update_rental_agreements_by_pk(
@@ -127,8 +162,8 @@ export async function POST(req) {
         calendar_event_id: calendarEvent.data.id,
       });
     } catch (calendarError) {
-      console.error("Failed to create calendar event:", calendarError);
-      // Continue anyway - we've saved the agreement data
+      console.error("Failed to create calendar event:", calendarError.message);
+      console.error("Error details:", calendarError);
     }
 
     return NextResponse.json({
