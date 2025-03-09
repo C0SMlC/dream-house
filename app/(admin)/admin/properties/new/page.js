@@ -175,12 +175,12 @@ const PropertyForm = () => {
               <h2 className="text-2xl font-bold text-gray-800">
                 Add New Property
               </h2>
-              <span className="text-sm text-gray-500">Step {step} of 4</span>
+              <span className="text-sm text-gray-500">Step {step} of 5</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(step / 4) * 100}%` }}
+                style={{ width: `${(step / 5) * 100}%` }}
               ></div>
             </div>
           </div>
